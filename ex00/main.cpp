@@ -16,9 +16,6 @@ int main(int argc, char **argv)
 	exchange.readData();
 	exchange.readInput();
 
-	BitcoinExchange::outMap(exchange.getData());
-	std::cout << "----------" <<std::endl;
-	BitcoinExchange::outMap(exchange.getInput());
-	std::cout << "----------" <<std::endl;
-	std::map<std::string, double> result = exchange.getInput();
+	// BitcoinExchange::outMap(exchange.getData());
+	// std::cout << "----------" <<std::endl;
 }

@@ -10,8 +10,7 @@ class BitcoinExchange {
 	private:
 		std::string dataPath;
 		std::string inputPath;
-		std::map<std::string, double> input;
-		std::map<std::string, double> data;
+		std::map<std::string, std::string> data;
 	public:
 		BitcoinExchange();
 		BitcoinExchange(const BitcoinExchange &copy);
@@ -21,16 +20,15 @@ class BitcoinExchange {
 
 		BitcoinExchange &operator=(const BitcoinExchange &copy);
 
+		void setDataPath(std::string dataPath);
+		void setInputPath(std::string inputPath);
+		
+		std::map<std::string, std::string> getData();
+		
 		void readData();
 		void readInput();
 
-		void setDataPath(std::string dataPath);
-		void setInputPath(std::string inputPath);
-
-		std::map<std::string, double> getData();
-		std::map<std::string, double> getInput();
-
-		static void outMap(const std::map<std::string, double> &map);
+		static void outMap(const std::map<std::string, std::string> &map);
 
 };
 
