@@ -82,6 +82,28 @@ std::map<std::string, std::string> BitcoinExchange::getData()
 	return data;
 }
 
+bool isLeap(int year)
+{
+	return (((year % 4 == 0) && 
+			(year % 100 != 0)) || 
+			(year % 400 == 0)); 
+}
+
+bool isValidDate(int year, int month, int day)
+{
+	if (year < 0 || month < 1 || month > 12 || day < 1 || day > 31)
+		return false;
+	if (month == 2)
+	{
+		if (isLeap(year))
+			return day <= 29;
+		return day <= 28;
+	}
+	if (month == 4 || month == 6 || month == 9 || month == 11)
+		return day <= 30;
+	return true;
+}
+
 //read input file line by line
 //For each line:
 //skip first line
@@ -123,7 +145,33 @@ void BitcoinExchange::readInput()
 			std::cerr << "Error: wrong date format: " << date << std::endl;
 			continue;
 		}
+		std::string year, month, day;
+		int yearInt, monthInt, dayInt;
 
+		year = date.substr(0, 4);
+		month = date.substr(5, 2);
+		day = date.substr(8, 2);
+
+		std::stringstream yearStream(year);
+		std::stringstream monthStream(month);
+		std::stringstream dayStream(day);
+
+		yearStream >> yearInt;
+		monthStream >> monthInt;
+		dayStream >> dayInt;
+
+		if (yearStream.fail() || monthStream.fail() || dayStream.fail())
+		{
+			std::cerr << "Error: wrong date format: " << date << std::endl;
+			continue;
+		}
+
+		if (!isValidDate(yearInt, monthInt, dayInt))
+		{
+			std::cerr << "Error: invalid date: " << date << std::endl;
+			continue;
+		}
+		
 		// Convert value to float
 		std::stringstream valueStream(valueStr);
 		float value;
@@ -162,7 +210,7 @@ void BitcoinExchange::readInput()
 				std::cerr << "Error: invalid rate in data map for date: " << it->first << std::endl;
 				continue;
 			}
-			std::cout << date << " : " << value * rate << std::endl;
+			std::cout << date << " => " << value << " = " << value * rate << std::endl;
 		}
 	}
 
