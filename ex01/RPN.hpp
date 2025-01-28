@@ -4,12 +4,13 @@
 #include <iostream>
 #include <sstream>
 #include <exception>
+#include <climits>
 
 class RPN
 {
 	private:
 		std::string _rpn;
-		std::stack<int> _stack;
+		std::stack<long long> _stack;
 	public:
 		RPN();
 		RPN(std::string rpn);
@@ -50,5 +51,14 @@ class RPN
 					return "Not respect RPN standard";
 				}
 		};
+
+		class outOfIntRangeException : public std::exception
+		{
+			public:
+				virtual const char *what() const throw()
+				{
+					return "Out of int range";
+				}
+		};		
 
 };

@@ -27,9 +27,9 @@ std::string RPN::getRPN() const
 	return _rpn;
 }
 
-void printStack(std::stack<int> stack)
+void printStack(std::stack<long long> stack)
 {
-	std::stack<int> tmp = stack;
+	std::stack<long long> tmp = stack;
 	std::cout << "Stack: ";
 	while (!tmp.empty())
 	{
@@ -37,6 +37,29 @@ void printStack(std::stack<int> stack)
 		tmp.pop();
 	}
 	std::cout << std::endl;
+}
+
+std::string removeUselessSpace(std::string str)
+{
+	std::string result;
+	bool space = false;
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		if (str[i] == ' ')
+		{
+			if (!space)
+			{
+				result += str[i];
+				space = true;
+			}
+		}
+		else
+		{
+			result += str[i];
+			space = false;
+		}
+	}
+	return result;
 }
 
 std::string trim(const std::string &str) {
@@ -50,7 +73,7 @@ std::string trim(const std::string &str) {
 		++rit;
 	}
 
-	return std::string(it, rit.base());
+	return removeUselessSpace(std::string(it, rit.base()));
 }
 
 int RPN::calculate()
@@ -58,15 +81,20 @@ int RPN::calculate()
 
 	std::string rpn = trim(_rpn);
 	std::string token;
-	int a, b;
+	long long a, b, result;
+	bool space = false;
 
 	//check if rpn respect the standard
 	//no charactere except numbers and operators +-*/
 	
 	for (size_t i = 0; i < rpn.size(); i++)
 	{
+
 		if (!std::isdigit(rpn[i]) && rpn[i] != ' ' && rpn[i] != '+' && rpn[i] != '-' && rpn[i] != '*' && rpn[i] != '/')
 			throw wrongArgumentException();
+
+		space = rpn[i] == ' ';
+
 	}
 
 	while (rpn.find(" ") != std::string::npos || rpn.size() > 0)
@@ -74,19 +102,30 @@ int RPN::calculate()
 		
 		token = rpn.substr(0, rpn.find(" "));
 		if (rpn.find(" ") != std::string::npos)
+		{
 			rpn = rpn.substr(rpn.find(" ") + 1);
+		}
 		else
+		{
+			if (_stack.size() == 0 && !std::isdigit(token[0]))
+				throw wrongCalculException();
 			rpn.clear();
+		}
 		// std::cout << "Token: \"" << token << "\"" << std::endl;
 		// std::cout << "RPN: \"" << rpn << "\"" << std::endl;
 
+		if (_stack.size() < 2 && (token == "+" || token == "-" || token == "*" || token == "/"))
+			throw wrongCalculException();
 		if (token == "+")
 		{
 			a = _stack.top();
 			_stack.pop();
 			b = _stack.top();
 			_stack.pop();
-			_stack.push(b + a);
+			result = b + a;
+			if (result > INT_MAX || result < INT_MIN)
+				throw outOfIntRangeException();
+			_stack.push(static_cast<int>(result));
 		}
 		else if (token == "-")
 		{
@@ -94,7 +133,10 @@ int RPN::calculate()
 			_stack.pop();
 			b = _stack.top();
 			_stack.pop();
-			_stack.push(b - a);
+			result = b - a;
+			if (result > INT_MAX || result < INT_MIN)
+				throw outOfIntRangeException();
+			_stack.push(static_cast<int>(result));
 		}
 		else if (token == "*")
 		{
@@ -102,7 +144,10 @@ int RPN::calculate()
 			_stack.pop();
 			b = _stack.top();
 			_stack.pop();
-			_stack.push(b * a);
+			result = b * a;
+			if (result > INT_MAX || result < INT_MIN)
+				throw outOfIntRangeException();
+			_stack.push(static_cast<int>(result));
 		}
 		else if (token == "/")
 		{
@@ -112,7 +157,10 @@ int RPN::calculate()
 			_stack.pop();
 			if (a == 0)
 				throw divideByZeroException();
-			_stack.push(b / a);
+			result = b / a;
+			if (result > INT_MAX || result < INT_MIN)
+				throw outOfIntRangeException();
+			_stack.push(static_cast<int>(result));
 		}
 		else
 		{
@@ -120,9 +168,12 @@ int RPN::calculate()
 			ss >> a;
 			_stack.push(a);
 		}
-		// printStack(_stack);
+		printStack(_stack);
 	}
 	if (_stack.size() != 1)
 		throw wrongCalculException();
-	return _stack.top();
+	result = _stack.top();
+	if (result > INT_MAX || result < INT_MIN)
+		throw outOfIntRangeException();
+	return static_cast<int>(result);
 }
