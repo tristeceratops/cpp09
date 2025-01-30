@@ -6,27 +6,18 @@
 #include <cstdlib>
 #include <iostream>
 #include <sys/time.h>
+#include <cmath>
 
 class PmergeMe
 {
 	private:		
-		std::vector<int> _vector;
-		std::vector<int> _vector2;
-		std::deque<int> _deque;
-		std::deque<int> _deque2;
-	public:
 		PmergeMe();
-		PmergeMe(const std::vector<int> &vector);
-		PmergeMe(const std::vector<int> &vector, const std::deque<int> &deque);
-		PmergeMe(const std::deque<int> &deque);
 		PmergeMe(const PmergeMe &copy);
+		PmergeMe &operator=(const PmergeMe &rhs);
+	public:
 
 		~PmergeMe();
-
-		PmergeMe &operator=(const PmergeMe &rhs);
-
-		void setVector(const std::vector<int> &list);
-		void setDeque(const std::deque<int> &list);
-
-		void merge();
-};	
+		//return time of execution
+		static double sortVector(std::vector<int> &vector);
+		// static double sortDeque(std::deque<int> &vector);
+};

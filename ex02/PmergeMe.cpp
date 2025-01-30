@@ -1,101 +1,99 @@
 #include "PmergeMe.hpp"
-
-void merge(std::vector<int>& arr, int start, int mid, int end)
-{
-	std::vector<int> temp(end - start + 1);
-	int i = start, j = mid + 1, k = 0;
-
-	while (i <= mid && j <= end)
-	{
-		if (arr[i] <= arr[j])
-			temp[k++] = arr[i++];
-		else
-			temp[k++] = arr[j++];
-	}
-
-	while (i <= mid)
-		temp[k++] = arr[i++];
-
-	while (j <= end)
-		temp[k++] = arr[j++];
-
-	for (int i = start; i <= end; i++)
-		arr[i] = temp[i - start];
-}
-
-void sortVectorRecursive(std::vector<int> &vector, int start, int end)
-{
-	if (start >= end)
-		return;
-
-	int mid = start + (end - start) / 2;
-
-	sortVectorRecursive(vector, start, mid);
-	sortVectorRecursive(vector, mid + 1, end);
-
-	merge(vector, start, mid, end);
-}
-
-void sortVector(std::vector<int> &vector)
-{
-	sortVectorRecursive(vector, 0, vector.size() - 1);
-}
-
 PmergeMe::PmergeMe(){}
 
-PmergeMe::PmergeMe(const std::vector<int> &vector): _vector(vector), _vector2(vector) {}
-
-PmergeMe::PmergeMe(const std::vector<int> &vector, const std::deque<int> &deque)
-: _vector(vector), _vector2(vector), _deque(deque), _deque2(deque) {}
-
-PmergeMe::PmergeMe(const std::deque<int> &deque): _deque(deque), _deque2(deque) {}
-
-PmergeMe::PmergeMe(const PmergeMe &copy)
-: _vector(copy._vector), _vector2(copy._vector2), _deque(copy._deque), _deque2(copy._deque2) {}
+PmergeMe::PmergeMe(const PmergeMe &copy){}
 
 PmergeMe::~PmergeMe(){}
 
-PmergeMe &PmergeMe::operator=(const PmergeMe &rhs)
+PmergeMe &PmergeMe::operator=(const PmergeMe &rhs) {return *this;}
+///////////////
+int jacobsthalNumber(int k)
 {
-	if (this != &rhs)
+	return (pow(2, k+1) + pow(-1, k))/3;
+}
+
+std::vector<std::pair<int, int>> createPairs(std::vector<int> &vector)
+{
+	std::vector<std::pair<int, int>> pairs;
+	for (size_t i = 0; i < vector.size(); i += 2)
 	{
-		_vector = rhs._vector;
-		_deque = rhs._deque;
-		_vector2 = rhs._vector2;
-		_deque2 = rhs._deque2;
+		if (i + 1 < vector.size())
+			pairs.push_back(std::make_pair(vector[i], vector[i + 1]));
+		else
+			pairs.push_back(std::make_pair(vector[i], -1));
 	}
-	return *this;
+	return pairs;
 }
 
-void PmergeMe::setVector(const std::vector<int> &vector)
+void extractSequence(std::vector<std::pair<int, int>>  &pairs, std::vector<int> &main, std::vector<int> &pend, int &odd)
 {
-	_vector = vector;
+	for (size_t i = 0; i < pairs.size(); i++)
+	{
+		if (pairs[i].second == -1)
+		{
+			main.push_back(pairs[i].first);
+		}
+		else if (pairs[i].first < pairs[i].second)
+		{
+			main.push_back(pairs[i].first);
+			pend.push_back(pairs[i].second);
+		}
+		else
+		{
+			main.push_back(pairs[i].second);
+			pend.push_back(pairs[i].first);
+		}
+	}
+
+	odd = -1;
+	if (main.size() % 2 != 0)
+	{
+		odd = main[main.size() - 1];
+		main.pop_back();
+	}
 }
 
-void PmergeMe::setDeque(const std::deque<int> &deque)
+void insertPend(std::vector<int> &main, std::vector<int> &pend)
 {
-	_deque = deque;
+	int jacobN = jacobsthalNumber(0);
+	std::vector<bool> inserted(pend.size(), false);
+
+	while ()
+
+
 }
 
-void PmergeMe::merge()
+void insertInOrder(std::vector<int> &main, int value) //trie dichotomique
 {
-	if (_vector.empty() || _deque.empty())
-		return;
+}
+
+double PmergeMe::sortVector(std::vector<int> &vector)
+{
+	struct timeval start, end;
+	gettimeofday(&start, NULL);
 	
-	sortVector(_vector);
+	if (vector.size() <= 1)
+	{
+		gettimeofday(&end, NULL);
+		double time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+		return time;
+	}
 
-	std::cout << "Before: ";
-	for (size_t i = 0; i < _vector2.size(); ++i)
-		std::cout << _vector2[i] << " ";
-	std::cout << std::endl;
+	std::vector<std::pair<int, int>> pairs = createPairs(vector);
 
-	std::cout << "After: ";
-	for (size_t i = 0; i < _vector.size(); ++i)
-		std::cout << _vector[i] << " ";
-	std::cout << std::endl;
+	gettimeofday(&end, NULL);
+	double time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+	return time;
 }
 
-// void sortDeque(std::deque<int> &deque)
+// double PmergeMe::sortDeque(std::deque<int> &vector)
 // {
+// 	struct timeval start, end;
+// 	gettimeofday(&start, NULL);
+	
 // 	//sort deque
+
+// 	gettimeofday(&end, NULL);
+// 	double time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+// 	return time;
 // }
