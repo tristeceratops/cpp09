@@ -17,7 +17,6 @@ class PmergeMe
 	public:
 
 		~PmergeMe();
-		//return time of execution
 		static double sortVector(std::vector<int> &vector);
-		// static double sortDeque(std::deque<int> &vector);
+		static double sortDeque(std::deque<int> &vector);
 };
