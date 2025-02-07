@@ -18,6 +18,7 @@ bool isPositiveInteger(const char* str)
 int main(int argc, char* argv[])
 {
 	struct timeval start, end;
+	double time_v, time_d;
 	gettimeofday(&start, NULL);
 
 	if (argc < 2) {
@@ -39,7 +40,6 @@ int main(int argc, char* argv[])
 	std::deque<int> before = d_values;
 	gettimeofday(&end, NULL);
 
-	double time_v, time_d;
 	time_v = PmergeMe::sortVector(v_values);
 	time_d = PmergeMe::sortDeque(d_values);
 

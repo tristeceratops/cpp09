@@ -13,7 +13,6 @@ int main(int argc, char **argv)
 	}
 	BitcoinExchange exchange(DATA_PATH, argv[1]);
 
-	exchange.readData();
 	exchange.readInput();
 
 	// BitcoinExchange::outMap(exchange.getData());

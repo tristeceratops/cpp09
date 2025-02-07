@@ -11,6 +11,7 @@ class BitcoinExchange {
 		std::string dataPath;
 		std::string inputPath;
 		std::map<std::string, std::string> data;
+		int readData();
 	public:
 		BitcoinExchange();
 		BitcoinExchange(const BitcoinExchange &copy);
@@ -25,10 +26,9 @@ class BitcoinExchange {
 		
 		std::map<std::string, std::string> getData();
 		
-		void readData();
 		void readInput();
 
-		static void outMap(const std::map<std::string, std::string> &map);
+		//static void outMap(const std::map<std::string, std::string> &map);
 
 };
 
