@@ -2,7 +2,9 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <limits>
 #include "PmergeMe.hpp"
+
 
 bool isPositiveInteger(const char* str)
 {
@@ -19,6 +21,9 @@ int main(int argc, char* argv[])
 {
 	struct timeval start, end;
 	double time_v, time_d;
+	std::vector<int> v_values;
+	std::deque<int> d_values;
+	std::vector<int> before;
 	gettimeofday(&start, NULL);
 
 	if (argc < 2) {
@@ -26,10 +31,13 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	std::vector<int> v_values;
-	std::deque<int> d_values;
 	for (int i = 1; i < argc; ++i) {
 		if (isPositiveInteger(argv[i])) {
+			long long value = std::atoll(argv[i]);
+			if (value > std::numeric_limits<int>::max() || value < 0) {
+				std::cerr << "Error: '" << argv[i] << "' is out of range.\n";
+				return 1;
+			}
 			v_values.push_back(std::atoi(argv[i]));
 			d_values.push_back(std::atoi(argv[i]));
 		} else {
@@ -37,7 +45,7 @@ int main(int argc, char* argv[])
 			return 1;
 		}
 	}
-	std::deque<int> before = d_values;
+	before = v_values;
 	gettimeofday(&end, NULL);
 
 	time_v = PmergeMe::sortVector(v_values);

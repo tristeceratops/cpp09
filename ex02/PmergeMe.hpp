@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sys/time.h>
 #include <cmath>
+#include <algorithm>
 
 class PmergeMe
 {
@@ -18,5 +19,5 @@ class PmergeMe
 
 		~PmergeMe();
 		static double sortVector(std::vector<int> &vector);
-		static double sortDeque(std::deque<int> &vector);
+		static double sortDeque(std::deque<int> &deque);
 };

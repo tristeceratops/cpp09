@@ -33,27 +33,27 @@ void insertInOrder(std::vector<int> &main, int value) //trie dichotomique
 // }
 
 std::deque<int> generateJacobsthalIndicesDeque(int size) {
-    std::deque<int> indices;
-    int j1 = 0, j2 = 1;
-    while (j2 < size) {
-        indices.push_back(j2);
-        int next = j2 + 2 * j1;
-        j1 = j2;
-        j2 = next;
-    }
-    return indices;
+	std::deque<int> indices;
+	int j1 = 0, j2 = 1;
+	while (j2 < size) {
+		indices.push_back(j2);
+		int next = j2 + 2 * j1;
+		j1 = j2;
+		j2 = next;
+	}
+	return indices;
 }
 
 std::vector<int> generateJacobsthalIndicesVector(int size) {
-    std::vector<int> indices;
-    int j1 = 0, j2 = 1;
-    while (j2 < size) {
-        indices.push_back(j2);
-        int next = j2 + 2 * j1;
-        j1 = j2;
-        j2 = next;
-    }
-    return indices;
+	std::vector<int> indices;
+	int j1 = 0, j2 = 1;
+	while (j2 < size) {
+		indices.push_back(j2);
+		int next = j2 + 2 * j1;
+		j1 = j2;
+		j2 = next;
+	}
+	return indices;
 }
 
 void makePairs(std::deque<int> &deque, std::deque<std::pair<int, int> > &pairs, int &odd)
@@ -86,42 +86,10 @@ void makePairs(std::vector<int> &vector, std::vector<std::pair<int, int> > &pair
 	}
 }
 
-void sortPairs(std::deque<std::pair<int, int> > &pairs, size_t n)
-{
-	if (n <= 1)
-		return;
-
-	for (size_t i = 0; i < n - 1; i++)
-	{
-		if (pairs[i].second > pairs[i + 1].second)
-		{
-			std::pair<int, int> temp = pairs[i];
-			pairs[i] = pairs[i + 1];
-			pairs[i + 1] = temp;
-		}
-	}
-	sortPairs(pairs, n - 1);
-}
-
-void sortPairs(std::vector<std::pair<int, int> > &pairs, size_t n)
-{
-	if (n <= 1)
-		return;
-
-	for (size_t i = 0; i < n - 1; i++)
-	{
-		if (pairs[i].second > pairs[i + 1].second)
-		{
-			std::pair<int, int> temp = pairs[i];
-			pairs[i] = pairs[i + 1];
-			pairs[i + 1] = temp;
-		}
-	}
-	sortPairs(pairs, n - 1);
-}
-
 void splitPairs(std::deque<std::pair<int, int> > &pairs, std::deque<int> &main, std::deque<int> &pend, int odd)
 {
+	main.clear();
+	pend.clear();
 	for (size_t i = 0; i < pairs.size(); ++i)
 	{
 		main.push_back(pairs[i].second);
@@ -133,6 +101,8 @@ void splitPairs(std::deque<std::pair<int, int> > &pairs, std::deque<int> &main, 
 
 void splitPairs(std::vector<std::pair<int, int> > &pairs, std::vector<int> &main, std::vector<int> &pend, int odd)
 {
+	main.clear();
+	pend.clear();
 	for (size_t i = 0; i < pairs.size(); ++i)
 	{
 		main.push_back(pairs[i].second);
@@ -153,6 +123,12 @@ void insertPend(std::deque<int> &main, std::deque<int> &pend)
 			continue;
 		insertInOrder(main, pend[jacobsthalIndices[i]]);
 		inserted[jacobsthalIndices[i]] = true;
+		int pendSize = pend.size();
+		if (jacobsthalIndices[i] + 1 < pendSize && !inserted[jacobsthalIndices[i] + 1])
+		{
+			insertInOrder(main, pend[jacobsthalIndices[i] + 1]);
+			inserted[jacobsthalIndices[i] + 1] = true;
+		}
 	}
 
 	for (size_t i = 0; i < pend.size(); ++i)
@@ -173,6 +149,12 @@ void insertPend(std::vector<int> &main, std::vector<int> &pend)
 			continue;
 		insertInOrder(main, pend[jacobsthalIndices[i]]);
 		inserted[jacobsthalIndices[i]] = true;
+		int pendSize = pend.size();
+		if (jacobsthalIndices[i] + 1 < pendSize && !inserted[jacobsthalIndices[i] + 1])
+		{
+			insertInOrder(main, pend[jacobsthalIndices[i] + 1]);
+			inserted[jacobsthalIndices[i] + 1] = true;
+		}
 	}
 
 	for (size_t i = 0; i < pend.size(); ++i)
@@ -182,54 +164,68 @@ void insertPend(std::vector<int> &main, std::vector<int> &pend)
 	}
 }
 
-double PmergeMe::sortVector(std::vector<int> &vector)
+void recSortMain(std::deque<int> &main)
 {
-	struct timeval begin, end;
-	double time;
+	if (main.size() <= 1) return;
 
-	gettimeofday(&begin, NULL);
-	if (vector.size() <= 1)
-	{
-		gettimeofday(&end, NULL);
-		time = (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec) / 1000000.0;
-		return time;
-	}
-	std::vector<std::pair<int, int> > pairs;
-	std::vector<int> main, pend;
 	int odd = -1;
+	std::deque<std::pair<int, int> > pairs;
+	std::deque<int> pend;
 
-	makePairs(vector, pairs, odd);
-	sortPairs(pairs, pairs.size());
+	makePairs(main, pairs, odd);
 	splitPairs(pairs, main, pend, odd);
+	recSortMain(main);
 	insertPend(main, pend);
-	vector = main;
-	gettimeofday(&end, NULL);
-	time = (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec) / 1000000.0;
-	return time;
+}
+
+void recSortMain(std::vector<int> &main)
+{
+	if (main.size() <= 1) return;
+
+	int odd = -1;
+	std::vector<std::pair<int, int> > pairs;
+	std::vector<int> pend;
+
+	makePairs(main, pairs, odd);
+	splitPairs(pairs, main, pend, odd);
+	recSortMain(main);
+	insertPend(main, pend);
 }
 
 double PmergeMe::sortDeque(std::deque<int> &deque)
 {
-	struct timeval begin, end;
-	double time;
-
-	gettimeofday(&begin, NULL);
-	if (deque.size() <= 1)
-	{
-		gettimeofday(&end, NULL);
-		time = (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec) / 1000000.0;
-		return time;
-	}
-	std::deque<std::pair<int, int> > pairs;
+	struct timeval start, end;
+	gettimeofday(&start, NULL);
 	std::deque<int> main, pend;
+	std::deque<std::pair<int, int> > pairs;
 	int odd = -1;
-
 	makePairs(deque, pairs, odd);
-	sortPairs(pairs, pairs.size());
+	if (odd != -1)
+		pend.push_back(odd);
 	splitPairs(pairs, main, pend, odd);
+	recSortMain(main);
 	insertPend(main, pend);
-	deque = main;
 	gettimeofday(&end, NULL);
-	time = (end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec) / 1000000.0;
-	return time;
+	deque = main;
+	return end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+
+}
+
+double PmergeMe::sortVector(std::vector<int> &vector)
+{
+	struct timeval start, end;
+	gettimeofday(&start, NULL);
+	std::vector<int> main, pend;
+	std::vector<std::pair<int, int> > pairs;
+	int odd = -1;
+	makePairs(vector, pairs, odd);
+	if (odd != -1)
+		pend.push_back(odd);
+	splitPairs(pairs, main, pend, odd);
+	recSortMain(main);
+	insertPend(main, pend);
+	gettimeofday(&end, NULL);
+	vector = main;
+	return end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+
 }
